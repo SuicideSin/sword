@@ -55,7 +55,7 @@ module cr2032_slot()
 
 module bay()
 {
-    translate([handle_walls,handle_walls,handle_walls])
+    translate([-(bay_dim.x+handle_walls*2)/2+handle_walls,handle_walls,handle_walls])
         cube(size=bay_dim);
 }
 
@@ -65,27 +65,33 @@ module handle()
     {
         union()
         {
-            cube(size=mid_dim);
+            translate([-mid_dim.x/2,0,0])
+                cube(size=mid_dim);
 
-            translate([hilt_w-(bay_dim.x-hilt_w)/2,0,-details])
+            translate([0,0,-details])
                 cylinder($fn=4,h=bay_dim.z+handle_walls*2+details*2,r=hilt_w);
 
-            translate([hilt_w-(bay_dim.x-hilt_w)/2,handle_top-hilt_w/2,-details])
+            //(bay_dim.x-hilt_w)/2
+            translate([0,handle_top-hilt_w/2,-details])
                 rotate([0,0,270])
                     scale([1,2.5,1])
                         cylinder($fn=3,h=outer_handle_h,r=hilt_w);
         }
+
         union()
         {
-            bay();
+            translate([-mid_dim/2,0,0])
+            {
+                bay();
 
-            translate([0,handle_top+sigma-blade_inset,0])
-                cube([blade_w,blade_inset,blade_t]);
+                translate([-blade_w/2,handle_top+sigma-blade_inset,0])
+                    cube([blade_w,blade_inset,blade_t]);
 
-            translate([(mid_dim.x-batt_dim.x)/2,-(hilt_w+sigma),(mid_dim.z-batt_dim.z)/2])
-                cr2032_slot();
+                translate([-batt_dim.x/2,-(hilt_w+sigma),(mid_dim.z-batt_dim.z)/2])
+                    cr2032_slot();
+            }
 
-            translate([mid_dim.x/2,handle_top-blade_inset-button_d/2,handle_walls])
+            translate([0,handle_top-blade_inset-button_d/2,handle_walls])
                 cylinder(d=button_d,h=outer_handle_h-handle_walls-details+sigma);
         }
     }
@@ -121,4 +127,4 @@ module blade()
 }
 
 handle();
-blade();
+//blade();
