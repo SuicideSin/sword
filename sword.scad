@@ -1,23 +1,44 @@
-bay_dim=[25,60,12];
-batt_dim=[20,30,3.15];
-handle_walls=2;
-sigma=0.01;
-details=2;
-blade_inset=10;
-button_d=10;
 $fn=100;
+sigma=0.01;
 
-handle_top=bay_dim.y+handle_walls;
-mid_dim=[bay_dim.x+handle_walls*2,handle_top,bay_dim.z+handle_walls*2];
-hilt_w=bay_dim.x*0.75;
-outer_handle_h=bay_dim.z+handle_walls*2+details*2;
 blade_wiggle=0.75;
-blade_w=bay_dim.x+handle_walls*2-blade_wiggle;
-blade_t=bay_dim.z+handle_walls*2-blade_wiggle;
+blade_w=29-blade_wiggle;
+blade_t=16-blade_wiggle;
 blade_h=100;
 blade_tip=12;
 blade_real_h=blade_h-blade_tip;
 blade_sleekness=0.5;
+blade_inset=10;
+
+guard_w=80;
+guard_h=28.0;
+
+handle_w=29;
+handle_h=48;
+
+pommel_w=38;
+pommel_h=38;
+
+hilt_walls=2;
+hilt_middle=18;
+hilt_hang=2;
+hilt_floor=2;
+hilt_clasp_h=1;
+hilt_clasp_wiggle=0.25;
+
+light_w=blade_w-hilt_walls*2;
+light_d=guard_h;
+light_t=hilt_middle/2-hilt_floor;
+
+button_yoff=19;
+button_d=10;
+button_h=10;
+button_wiggle=0.5;
+button_flange=2;
+button_protrude=2;
+
+hole_sink_d=4.5;
+hole_screw_d=2.5;
 
 module fcube(bs,ts,h)
 {
@@ -47,55 +68,6 @@ module fcube(bs,ts,h)
 	];
 
 	polyhedron(verts,faces);
-}
-
-module cr2032_slot()
-{
-	cube(size=batt_dim);
-}
-
-module bay()
-{
-	translate([-(bay_dim.x+handle_walls*2)/2+handle_walls,handle_walls,handle_walls])
-		cube(size=bay_dim);
-}
-
-module handle()
-{
-	difference()
-	{
-		union()
-		{
-			translate([-mid_dim.x/2,0,0])
-				cube(size=mid_dim);
-
-			translate([0,0,-details])
-				cylinder($fn=4,h=bay_dim.z+handle_walls*2+details*2,r=hilt_w);
-
-			//(bay_dim.x-hilt_w)/2
-			translate([0,handle_top-hilt_w/2,-details])
-				rotate([0,0,270])
-					scale([1,2.5,1])
-						cylinder($fn=3,h=outer_handle_h,r=hilt_w);
-		}
-
-		union()
-		{
-			translate([-mid_dim/2,0,0])
-			{
-				bay();
-
-				translate([-blade_w/2,handle_top+sigma-blade_inset,0])
-					cube([blade_w,blade_inset,blade_t]);
-
-				translate([-batt_dim.x/2,-(hilt_w+sigma),(mid_dim.z-batt_dim.z)/2])
-					cr2032_slot();
-			}
-
-			translate([0,handle_top-blade_inset-button_d/2,handle_walls])
-				cylinder(d=button_d,h=outer_handle_h-handle_walls-details+sigma);
-		}
-	}
 }
 
 module blade()
@@ -130,6 +102,157 @@ module blade()
 		polyhedron(verts,faces);
 }
 
-handle();
-translate([0,80,0])
-	blade();
+module guard_2d(sink,holes)
+{
+	difference()
+	{
+		polygon([[-guard_w/2,guard_h/2],[0,-guard_h/2],[guard_w/2,guard_h/2]]);
+		translate([guard_w/4,guard_h/4])
+		{
+			if(sink)
+				circle(d=hole_sink_d);
+			if(holes)
+				circle(d=hole_screw_d);
+		}
+		translate([-guard_w/4,guard_h/4])
+		{
+			if(sink)
+				circle(d=hole_sink_d);
+			if(holes)
+				circle(d=hole_screw_d);
+		}
+	}
+}
+
+module handle_2d()
+{
+	h=handle_h-hole_sink_d;
+	translate([0,hole_sink_d/2])
+		polygon([[-handle_w/2,h/2],[handle_w/2,h/2],[handle_w/2,-h/2],[-handle_w/2,-h/2]]);
+}
+
+module pommel_2d(sink,holes)
+{
+	difference()
+	{
+		polygon([[-pommel_w/2,0],[0,pommel_h/2],[pommel_w/2,0],[0,-pommel_h/2]]);
+		if(sink)
+			circle(d=hole_sink_d);
+		if(holes)
+			circle(d=hole_screw_d);
+	}
+}
+
+module blade_inset_2d()
+{
+	polygon([[-blade_w/2,blade_inset/2],[blade_w/2,blade_inset/2],[blade_w/2,-blade_inset/2],[-blade_w/2,-blade_inset/2]]);
+}
+
+module hilt_2d(hide_mid,blade,sink,holes)
+{
+	translate([0,-guard_h/2])
+	{
+		difference()
+		{
+			guard_2d(sink,holes);
+			if(blade)
+				translate([0,(guard_h-blade_inset)/2])
+					blade_inset_2d();
+		}
+		translate([0,-handle_h/2])
+		{
+			if(!hide_mid)
+				handle_2d(sink,holes);
+			translate([0,-handle_h/2])
+				pommel_2d(sink,holes);
+		}
+	}
+}
+
+module hilt_level(height,hide_mid,solid,blade,sink,holes)
+{
+	linear_extrude(height)
+		difference()
+		{
+			hilt_2d(hide_mid,blade,sink,holes);
+			if(!solid)
+				offset(-hilt_walls)
+					hilt_2d(hide_mid,blade,sink,holes);
+		}
+}
+
+module hilt_clasp(inside)
+{
+	linear_extrude(hilt_clasp_h)
+		if(!inside)
+			difference()
+			{
+				offset((-hilt_clasp_wiggle-hilt_walls)/2)
+					hilt_2d(false,true,false,false);
+				offset(-hilt_walls)
+					hilt_2d(false,true,false,false);
+			}
+		else
+			difference()
+			{
+				offset(0)
+					hilt_2d(false,true,false,false);
+				offset((hilt_clasp_wiggle-hilt_walls)/2)
+					hilt_2d(false,true,false,false);
+			}
+}
+
+module hilt_half(holes)
+{
+	difference()
+	{
+		union()
+		{
+			hilt_level(hilt_hang,true,true,false,holes&&true,holes&&false);
+			translate([0,0,hilt_hang])
+			{
+				hilt_level(hilt_floor,false,true,true,holes&&false,holes&&true);
+				middle_real_height=hilt_middle/2-hilt_clasp_h;
+				hilt_level(middle_real_height,false,false,true,false,true);
+				translate([0,0,middle_real_height])
+					hilt_clasp(holes);
+			}
+		}
+		
+		union()
+		{
+			translate([-light_w/2,sigma-light_d,hilt_hang+hilt_floor+sigma])
+				cube([light_w,light_d,light_t]);
+
+			if(!holes)
+				translate([0,-button_yoff,-sigma])
+					cylinder(h=hilt_hang+hilt_middle/2,d=button_d);
+		}
+	}
+}
+
+module button()
+{
+	roundness=8;
+	translate([0,0,roundness/2])
+		minkowski()
+		{
+			cylinder(h=button_h+button_protrude-roundness,d=button_d-button_wiggle-roundness);
+			sphere(d=roundness);
+		}
+	cylinder(h=button_h-hilt_hang-hilt_floor,d=button_d+button_flange);
+}
+
+spread=12;
+
+translate([-(guard_w+spread+button_d)/2,0,0])
+	button();
+
+rotate([270,0,0])
+	translate([-blade_w/2,-blade_t-hilt_hang,-blade_inset])
+			blade();
+
+hilt_half(true);
+
+translate([-(guard_w+spread+button_d),0,0])
+	hilt_half();
