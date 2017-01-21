@@ -2,8 +2,8 @@ $fn=100;
 sigma=0.01;
 
 blade_wiggle=0.75;
-blade_w=29-blade_wiggle;
-blade_t=16-blade_wiggle;
+blade_w=29;
+blade_t=16;
 blade_h=100;
 blade_tip=12;
 blade_real_h=blade_h-blade_tip;
@@ -14,7 +14,7 @@ guard_w=80;
 guard_h=28.0;
 
 handle_w=29;
-handle_h=48;
+handle_h=54;
 
 pommel_w=38;
 pommel_h=38;
@@ -33,11 +33,11 @@ light_t=hilt_middle/2-hilt_floor;
 button_yoff=19;
 button_d=10;
 button_h=10;
-button_wiggle=0.5;
+button_wiggle=0.75;
 button_flange=2;
 button_protrude=2;
 
-hole_sink_d=4.5;
+hole_sink_d=7;
 hole_screw_d=2.5;
 
 module fcube(bs,ts,h)
@@ -72,10 +72,13 @@ module fcube(bs,ts,h)
 
 module blade()
 {
-	cube([blade_w,blade_t,blade_inset]);
+	real_blade_w=blade_w-blade_wiggle;
+	real_blade_t=blade_t-blade_wiggle;
+	
+	cube([real_blade_w,real_blade_t,blade_inset]);
 
-	bs=[blade_w,blade_t];
-	ts=[blade_w*blade_sleekness,blade_t*blade_sleekness];
+	bs=[real_blade_w,real_blade_t];
+	ts=[real_blade_w*blade_sleekness,real_blade_t*blade_sleekness];
 	translate([0,0,blade_inset])
 		fcube(bs=bs,ts=ts,h=blade_real_h-blade_inset);
 	
@@ -126,8 +129,8 @@ module guard_2d(sink,holes)
 
 module handle_2d()
 {
-	h=handle_h-hole_sink_d;
-	translate([0,hole_sink_d/2])
+	h=handle_h-hole_screw_d/2;
+	translate([0,hole_screw_d/2])
 		polygon([[-handle_w/2,h/2],[handle_w/2,h/2],[handle_w/2,-h/2],[-handle_w/2,-h/2]]);
 }
 
