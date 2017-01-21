@@ -32,8 +32,8 @@ light_t=hilt_middle/2-hilt_floor;
 
 button_yoff=19;
 button_d=10;
-button_h=10;
-button_wiggle=0.75;
+button_h=8;
+button_wiggle=1;
 button_flange=2;
 button_protrude=2;
 
