@@ -721,6 +721,8 @@ Standard 1-pin 0.1" header. Use with straight break away headers (SKU : PRT-0011
 <part name="S1" library="switch-omron" deviceset="10-XX" device=""/>
 <part name="J1" library="SparkFun-Connectors" deviceset="M01" device="PTH_LONGPAD"/>
 <part name="J2" library="SparkFun-Connectors" deviceset="M01" device="PTH_LONGPAD"/>
+<part name="J3" library="SparkFun-Connectors" deviceset="M01" device="PTH_LONGPAD"/>
+<part name="J4" library="SparkFun-Connectors" deviceset="M01" device="PTH_LONGPAD"/>
 </parts>
 <sheets>
 <sheet>
@@ -731,6 +733,8 @@ Standard 1-pin 0.1" header. Use with straight break away headers (SKU : PRT-0011
 <instance part="S1" gate="1" x="30.48" y="53.34"/>
 <instance part="J1" gate="G$1" x="40.64" y="81.28" rot="R270"/>
 <instance part="J2" gate="G$1" x="40.64" y="20.32" rot="R90"/>
+<instance part="J3" gate="G$1" x="33.02" y="81.28" rot="R270"/>
+<instance part="J4" gate="G$1" x="33.02" y="20.32" rot="R90"/>
 </instances>
 <busses>
 </busses>
