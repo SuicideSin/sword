@@ -707,6 +707,45 @@ Standard 1-pin 0.1" header. Use with straight break away headers (SKU : PRT-0011
 </deviceset>
 </devicesets>
 </library>
+<library name="wirepad">
+<description>&lt;b&gt;Single Pads&lt;/b&gt;&lt;p&gt;
+&lt;author&gt;Created by librarian@cadsoft.de&lt;/author&gt;</description>
+<packages>
+<package name="SMD1,27-2,54">
+<description>&lt;b&gt;SMD PAD&lt;/b&gt;</description>
+<smd name="1" x="0" y="0" dx="1.27" dy="2.54" layer="1"/>
+<text x="0" y="0" size="0.0254" layer="27">&gt;VALUE</text>
+<text x="-0.8" y="-2.4" size="1.27" layer="25" rot="R90">&gt;NAME</text>
+</package>
+</packages>
+<symbols>
+<symbol name="PAD">
+<wire x1="-1.016" y1="1.016" x2="1.016" y2="-1.016" width="0.254" layer="94"/>
+<wire x1="-1.016" y1="-1.016" x2="1.016" y2="1.016" width="0.254" layer="94"/>
+<text x="-1.143" y="1.8542" size="1.778" layer="95">&gt;NAME</text>
+<text x="-1.143" y="-3.302" size="1.778" layer="96">&gt;VALUE</text>
+<pin name="P" x="2.54" y="0" visible="off" length="short" direction="pas" rot="R180"/>
+</symbol>
+</symbols>
+<devicesets>
+<deviceset name="SMD2" prefix="PAD" uservalue="yes">
+<description>&lt;b&gt;SMD PAD&lt;/b&gt;</description>
+<gates>
+<gate name="1" symbol="PAD" x="0" y="0"/>
+</gates>
+<devices>
+<device name="" package="SMD1,27-2,54">
+<connects>
+<connect gate="1" pin="P" pad="1"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+</devices>
+</deviceset>
+</devicesets>
+</library>
 </libraries>
 <attributes>
 </attributes>
@@ -718,11 +757,12 @@ Standard 1-pin 0.1" header. Use with straight break away headers (SKU : PRT-0011
 </classes>
 <parts>
 <part name="U1" library="SparkFun-DigitalIC" deviceset="ATTINY45" device="TINY45-20-DIP" value="TINY45-20-DIP"/>
-<part name="S1" library="switch-omron" deviceset="10-XX" device=""/>
-<part name="J1" library="SparkFun-Connectors" deviceset="M01" device="PTH_LONGPAD"/>
-<part name="J2" library="SparkFun-Connectors" deviceset="M01" device="PTH_LONGPAD"/>
-<part name="J3" library="SparkFun-Connectors" deviceset="M01" device="PTH_LONGPAD"/>
-<part name="J4" library="SparkFun-Connectors" deviceset="M01" device="PTH_LONGPAD"/>
+<part name="S1" library="switch-omron" deviceset="10-XX" device="" value="PWR_SW"/>
+<part name="J1" library="SparkFun-Connectors" deviceset="M01" device="PTH_LONGPAD" value="VCC_IN"/>
+<part name="J2" library="SparkFun-Connectors" deviceset="M01" device="PTH_LONGPAD" value="GND"/>
+<part name="PAD1" library="wirepad" deviceset="SMD2" device="" value="NEO_VCC"/>
+<part name="PAD2" library="wirepad" deviceset="SMD2" device="" value="NEO_DIN"/>
+<part name="PAD3" library="wirepad" deviceset="SMD2" device="" value="NEO_GND"/>
 </parts>
 <sheets>
 <sheet>
@@ -733,8 +773,9 @@ Standard 1-pin 0.1" header. Use with straight break away headers (SKU : PRT-0011
 <instance part="S1" gate="1" x="30.48" y="53.34"/>
 <instance part="J1" gate="G$1" x="40.64" y="81.28" rot="R270"/>
 <instance part="J2" gate="G$1" x="40.64" y="20.32" rot="R90"/>
-<instance part="J3" gate="G$1" x="33.02" y="81.28" rot="R270"/>
-<instance part="J4" gate="G$1" x="33.02" y="20.32" rot="R90"/>
+<instance part="PAD1" gate="1" x="76.2" y="71.12"/>
+<instance part="PAD2" gate="1" x="76.2" y="66.04"/>
+<instance part="PAD3" gate="1" x="76.2" y="60.96"/>
 </instances>
 <busses>
 </busses>
@@ -749,6 +790,12 @@ Standard 1-pin 0.1" header. Use with straight break away headers (SKU : PRT-0011
 <label x="50.8" y="73.66" size="1.778" layer="95" rot="R90" xref="yes"/>
 <pinref part="S1" gate="1" pin="S1"/>
 <wire x1="33.02" y1="58.42" x2="40.64" y2="58.42" width="0.1524" layer="91"/>
+<junction x="40.64" y="58.42"/>
+</segment>
+<segment>
+<pinref part="PAD1" gate="1" pin="P"/>
+<wire x1="78.74" y1="71.12" x2="83.82" y2="71.12" width="0.1524" layer="91"/>
+<label x="83.82" y="71.12" size="1.778" layer="95" xref="yes"/>
 </segment>
 </net>
 <net name="GND" class="0">
@@ -761,6 +808,12 @@ Standard 1-pin 0.1" header. Use with straight break away headers (SKU : PRT-0011
 <wire x1="40.64" y1="35.56" x2="50.8" y2="35.56" width="0.1524" layer="91"/>
 <wire x1="50.8" y1="35.56" x2="50.8" y2="27.94" width="0.1524" layer="91"/>
 <label x="50.8" y="27.94" size="1.778" layer="95" rot="R270" xref="yes"/>
+<junction x="40.64" y="35.56"/>
+</segment>
+<segment>
+<pinref part="PAD3" gate="1" pin="P"/>
+<wire x1="78.74" y1="60.96" x2="83.82" y2="60.96" width="0.1524" layer="91"/>
+<label x="83.82" y="60.96" size="1.778" layer="95" xref="yes"/>
 </segment>
 </net>
 <net name="DIN" class="0">
@@ -769,8 +822,13 @@ Standard 1-pin 0.1" header. Use with straight break away headers (SKU : PRT-0011
 <wire x1="73.66" y1="53.34" x2="86.36" y2="53.34" width="0.1524" layer="91"/>
 <label x="86.36" y="53.34" size="1.778" layer="95" xref="yes"/>
 </segment>
+<segment>
+<pinref part="PAD2" gate="1" pin="P"/>
+<wire x1="78.74" y1="66.04" x2="83.82" y2="66.04" width="0.1524" layer="91"/>
+<label x="83.82" y="66.04" size="1.778" layer="95" xref="yes"/>
+</segment>
 </net>
-<net name="N$1" class="0">
+<net name="VCC_SW" class="0">
 <segment>
 <pinref part="J1" gate="G$1" pin="1"/>
 <wire x1="40.64" y1="73.66" x2="40.64" y2="68.58" width="0.1524" layer="91"/>
