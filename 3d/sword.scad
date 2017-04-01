@@ -36,6 +36,7 @@ button_h=8;
 button_wiggle=1;
 button_flange=2;
 button_protrude=2;
+button_remove_bottom=2;
 
 hole_sink_d=7;
 hole_screw_d=2.5;
@@ -236,14 +237,22 @@ module hilt_half(holes)
 
 module button()
 {
-	roundness=8;
-	translate([0,0,roundness/2])
-		minkowski()
-		{
-			cylinder(h=button_h+button_protrude-roundness,d=button_d-button_wiggle-roundness);
-			sphere(d=roundness);
-		}
-	cylinder(h=button_h-hilt_hang-hilt_floor,d=button_d+button_flange);
+    difference()
+    {
+        union()
+        {
+            roundness=8;
+            translate([0,0,roundness/2])
+                minkowski()
+                {
+                    cylinder(h=button_h+button_protrude-roundness,d=button_d-button_wiggle-roundness);
+                    sphere(d=roundness);
+                }
+            cylinder(h=button_h-hilt_hang-hilt_floor,d=button_d+button_flange);
+        }
+        translate([0,0,-sigma])
+            cylinder(h=button_remove_bottom+sigma,d=button_d+button_flange+sigma);
+    }
 }
 
 spread=12;
